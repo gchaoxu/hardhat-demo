@@ -18,10 +18,14 @@ contract Bank {
     deposits[msg.sender] += msg.value;
   }
 
-  function myDeposit() public view returns(uint256) {
-    return deposits[msg.sender];
+ // 银行的部署人，取出所有的存款
+  function withdrawAll() public OnlyOwner {
+    uint b  = address(this).balance;
+
+    payable(owner).transfer(b);
   }
 
+  // 取款
   function withdraw () public {
     (bool success, ) = msg.sender.call{value: deposits[msg.sender]}(new bytes(0));
     require(success, 'transfer faild');
@@ -29,10 +33,14 @@ contract Bank {
     deposits[msg.sender] = 0;
   }
 
-  function withdrawAll() public OnlyOwner {
-    uint b  = address(this).balance;
+  // 存款 
+  function deposit(uint amount) public payable {
+    deposits[msg.sender] += amount;
+  }
 
-    payable(owner).transfer(b);
+  // 获取存款
+  function myDeposit() public view returns(uint256) {
+    return deposits[msg.sender];
   }
 
 }
